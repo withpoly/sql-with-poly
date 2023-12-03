@@ -1,6 +1,6 @@
 // Copyright 2023 Roy T. Hashimoto. All Rights Reserved.
 
-import SQLiteESMFactory from '../dist/wa-sqlite.mjs';
+import SQLiteESMFactory from '../dist/sql-with-poly.mjs';
 import * as SQLite from '../src/sqlite-api.js';
 import { AccessHandlePoolVFS } from '../src/examples/AccessHandlePoolVFS.js';
 
@@ -26,11 +26,11 @@ class DatabaseService {
   query(...args) {
     const result = this.#chain.then(async () => {
       if (this.#isTransactionPending()) {
-        await this.#tag('ROLLBACK').catch(() => {});
+        await this.#tag('ROLLBACK').catch(() => { });
       }
       return this.#tag(...args);
     });
-    this.#chain = result.catch(() => {});
+    this.#chain = result.catch(() => { });
     return result;
   }
 
@@ -51,7 +51,7 @@ class DatabaseService {
       db,
       'regexp', 2,
       SQLite.SQLITE_UTF8 | SQLite.SQLITE_DETERMINISTIC, 0,
-      function(context, values) {
+      function (context, values) {
         const pattern = new RegExp(sqlite3.value_text(values[0]))
         const s = sqlite3.value_text(values[1]);
         sqlite3.result(context, pattern.test(s) ? 1 : 0);
@@ -62,13 +62,13 @@ class DatabaseService {
       db,
       'regexp_replace', -1,
       SQLite.SQLITE_UTF8 | SQLite.SQLITE_DETERMINISTIC, 0,
-      function(context, values) {
+      function (context, values) {
         // Arguments are
         // (pattern, s, replacement) or
         // (pattern, s, replacement, flags).
         if (values.length < 3) {
           sqlite3.result(context, '');
-          return;  
+          return;
         }
         const pattern = sqlite3.value_text(values[0]);
         const s = sqlite3.value_text(values[1]);

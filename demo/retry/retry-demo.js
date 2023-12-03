@@ -17,12 +17,12 @@ CREATE TABLE IF NOT EXISTS copied AS SELECT * FROM goog;
 SELECT * FROM copied LIMIT 5;
 `.trim();
 
-const SQL_KEY = 'wa-sqlite demo sql';
+const SQL_KEY = 'sql-with-poly demo sql';
 
-window.addEventListener('DOMContentLoaded', async function() {
+window.addEventListener('DOMContentLoaded', async function () {
   const Comlink = await import(location.hostname.endsWith('localhost') ?
-  '/.yarn/unplugged/comlink-npm-4.4.1-b05bb2527d/node_modules/comlink/dist/esm/comlink.min.js' :
-  'https://unpkg.com/comlink/dist/esm/comlink.mjs');
+    '/.yarn/unplugged/comlink-npm-4.4.1-b05bb2527d/node_modules/comlink/dist/esm/comlink.min.js' :
+    'https://unpkg.com/comlink/dist/esm/comlink.mjs');
 
   const params = new URLSearchParams(window.location.search);
   if (params.has('clear')) {
@@ -38,7 +38,7 @@ window.addEventListener('DOMContentLoaded', async function() {
   const button = /** @type {HTMLButtonElement} */(document.getElementById('execute'));
   const editorReady = createMonacoEditor().then(editor => {
     // Change the button text with selection.
-    editor.onDidChangeCursorSelection(({selection}) => {
+    editor.onDidChangeCursorSelection(({ selection }) => {
       button.textContent = selection.isEmpty() ?
         'Execute' :
         'Execute selection';
@@ -46,9 +46,9 @@ window.addEventListener('DOMContentLoaded', async function() {
 
     // Persist editor content across page loads.
     let change;
-    editor.onDidChangeModelContent(function() {
+    editor.onDidChangeModelContent(function () {
       clearTimeout(change);
-      change = setTimeout(function() {
+      change = setTimeout(function () {
         localStorage.setItem(SQL_KEY, editor.getValue());
       }, 1000);
     });
@@ -62,7 +62,7 @@ window.addEventListener('DOMContentLoaded', async function() {
   const workerProxy = Comlink.wrap(worker);
 
   // Execute SQL on button click.
-  button.addEventListener('click', async function() {
+  button.addEventListener('click', async function () {
     button.disabled = true;
 
     // Get SQL from editor.

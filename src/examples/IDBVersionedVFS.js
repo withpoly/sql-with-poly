@@ -67,7 +67,7 @@ export class IDBVersionedVFS extends VFS.Base {
   /** @type {IDBContext} */ #idb;
   /** @type {Set<string>} */ #pendingPurges = new Set();
 
-  constructor(idbDatabaseName = 'wa-sqlite', options = DEFAULT_OPTIONS) {
+  constructor(idbDatabaseName = 'sql-with-poly', options = DEFAULT_OPTIONS) {
     super();
     this.name = idbDatabaseName;
     this.#options = Object.assign({}, DEFAULT_OPTIONS, options);
@@ -100,7 +100,7 @@ export class IDBVersionedVFS extends VFS.Base {
         this.#mapPathToFile.set(file.path, file);
 
         // Read the first block, which also contains the file metadata.
-        file.block0 = await this.#idb.run('readonly', ({blocks}) => {
+        file.block0 = await this.#idb.run('readonly', ({ blocks }) => {
           return blocks.get(IDBKeyRange.bound(
             [file.path, 0],
             [file.path, 0, Infinity]))
@@ -118,7 +118,7 @@ export class IDBVersionedVFS extends VFS.Base {
 
             // Write metadata block to IndexedDB.
             if (!this.#isJournal(file)) {
-              this.#idb.run('readwrite', ({blocks}) => blocks.put(file.block0));
+              this.#idb.run('readwrite', ({ blocks }) => blocks.put(file.block0));
               this.purge(file.path);
               await this.#idb.sync();
             }
@@ -149,7 +149,7 @@ export class IDBVersionedVFS extends VFS.Base {
         this.#mapIdToFile.delete(fileId);
         this.#mapPathToFile.delete(file.path);
         if (file.flags & VFS.SQLITE_OPEN_DELETEONCLOSE) {
-          this.#idb.run('readwrite', ({blocks}) => {
+          this.#idb.run('readwrite', ({ blocks }) => {
             blocks.delete(IDBKeyRange.bound(
               [file.path],
               [file.path, []],
@@ -185,7 +185,7 @@ export class IDBVersionedVFS extends VFS.Base {
 
       // Clip the requested read to the file boundary.
       const bgn = Math.min(iOffset, file.block0.fileSize);
-      const end = Math.min(iOffset + pData.byteLength, file.block0.fileSize);    
+      const end = Math.min(iOffset + pData.byteLength, file.block0.fileSize);
 
       let bytesRemaining = end - bgn;
       let bufferOffset = 0;
@@ -198,12 +198,12 @@ export class IDBVersionedVFS extends VFS.Base {
 
         // Fetch from IndexedDB.
         const version = file.block0.version - (file.changedPages?.size ? 1 : 0);
-        /** @type {FileBlock} */ let block = await this.#idb.run('readonly', ({blocks}) => {
-            return blocks.get(IDBKeyRange.bound(
-              [file.path, blockIndex, version],
-              [file.path, blockIndex, Infinity]
-            ));
-          });
+        /** @type {FileBlock} */ let block = await this.#idb.run('readonly', ({ blocks }) => {
+          return blocks.get(IDBKeyRange.bound(
+            [file.path, blockIndex, version],
+            [file.path, blockIndex, Infinity]
+          ));
+        });
 
         // Block 0 contains file metadata so it is cached.
         if (blockIndex === 0) {
@@ -257,11 +257,11 @@ export class IDBVersionedVFS extends VFS.Base {
       const pageIndex = dbFile.journalPages[entryIndex];
       if (file.cachedPageIndex !== pageIndex) {
         // Fetch original file data.
-        /** @type {FileBlock} */ const block = await this.#idb.run('readonly', ({blocks}) => {
-          return blocks.get(IDBKeyRange.bound(
-            [dbPath, pageIndex, dbFile.block0.version],
-            [dbPath, pageIndex, Infinity]));
-        });
+        /** @type {FileBlock} */ const block = await this.#idb.run('readonly', ({ blocks }) => {
+        return blocks.get(IDBKeyRange.bound(
+          [dbPath, pageIndex, dbFile.block0.version],
+          [dbPath, pageIndex, Infinity]));
+      });
 
         // Build a rollback page entry, which contains the page index,
         // the page data, and the page checksum. In the journal the page
@@ -276,7 +276,7 @@ export class IDBVersionedVFS extends VFS.Base {
         this.cachedPageEntry.set(block.data, 4);
         cachedPageView.setUint32(entrySize - 4, this.#checksum(block.data, nonce, pageSize));
       }
-    
+
       // Transfer the requested portion of the page entry.
       const skip = (iOffset - SECTOR_SIZE) % entrySize;
       pData.set(this.cachedPageEntry.subarray(skip, skip + pData.byteLength));
@@ -310,7 +310,7 @@ export class IDBVersionedVFS extends VFS.Base {
       if (!blockSize) {
         const fileType = file.flags & VFS.FILE_TYPE_MASK;
         if (fileType === VFS.SQLITE_OPEN_MAIN_DB ||
-            fileType === VFS.SQLITE_OPEN_TEMP_DB) {
+          fileType === VFS.SQLITE_OPEN_TEMP_DB) {
           // This is a database file, so all writes will be the page size.
           blockSize = pData.byteLength;
         } else {
@@ -335,14 +335,14 @@ export class IDBVersionedVFS extends VFS.Base {
           block.data = block.data || new Uint8Array(blockSize);
         } else if (blockIndex <= lastBlockIndex && blockBytes !== blockSize) {
           // Fetch from IndexedDB.
-          block = await this.#idb.run('readonly', ({blocks}) => {
+          block = await this.#idb.run('readonly', ({ blocks }) => {
             return blocks.get(IDBKeyRange.bound(
               [file.path, blockIndex],
               [file.path, blockIndex, Infinity]
             ));
           });
         }
-        
+
         if (!block) {
           // Either no data was read (SQLite does not always write
           // sequentially) or the write is beyond EOF.
@@ -358,10 +358,10 @@ export class IDBVersionedVFS extends VFS.Base {
         block.data.set(
           pData.subarray(bufferOffset, bufferOffset + blockBytes),
           blockOffset);
-        
+
         // Write (except block 0).
         if (blockIndex) {
-          this.#idb.run('readwrite', ({blocks}) => {
+          this.#idb.run('readwrite', ({ blocks }) => {
             blocks.put(block);
           });
         }
@@ -371,7 +371,7 @@ export class IDBVersionedVFS extends VFS.Base {
         fileOffset += blockBytes;
         bytesRemaining -= blockBytes;
       }
-      
+
       file.block0.fileSize = Math.max(file.block0.fileSize, iOffset + pData.byteLength);
       return VFS.SQLITE_OK;
     });
@@ -390,7 +390,7 @@ export class IDBVersionedVFS extends VFS.Base {
     const blockSize = pData.byteLength;
     const blockIndex = (iOffset / blockSize) | 0;
     if (iOffset !== blockIndex * blockSize ||
-        (file.block0.data && blockSize !== file.block0.data.length)) {
+      (file.block0.data && blockSize !== file.block0.data.length)) {
       console.error('unexpected database write parameters');
       return VFS.SQLITE_IOERR;
     }
@@ -403,7 +403,7 @@ export class IDBVersionedVFS extends VFS.Base {
       data: pData.slice()
     };
     if (blockIndex) {
-      this.#idb.run('readwrite', ({blocks}) => {
+      this.#idb.run('readwrite', ({ blocks }) => {
         blocks.put(block);
       });
     } else {
@@ -480,7 +480,7 @@ export class IDBVersionedVFS extends VFS.Base {
     const lastBlockIndex = file.block0.fileSize ?
       Math.floor(file.block0.fileSize / file.block0.data.length) :
       0;
-    this.#idb.run('readwrite', ({blocks})=> {
+    this.#idb.run('readwrite', ({ blocks }) => {
       blocks.put(block0);
       blocks.delete(IDBKeyRange.bound(
         [file.path, lastBlockIndex, Infinity],
@@ -539,7 +539,7 @@ export class IDBVersionedVFS extends VFS.Base {
         // lower (newer) versions than block 0. This is done on reserved
         // locking which is after changes by other connections can be made,
         // and before a journal file is initialized.
-        this.#idb.run('readwrite', async ({blocks}) => {
+        this.#idb.run('readwrite', async ({ blocks }) => {
           const keys = await blocks.index('version').getAllKeys(IDBKeyRange.bound(
             [file.path],
             [file.path, file.block0.version],
@@ -562,7 +562,7 @@ export class IDBVersionedVFS extends VFS.Base {
     return this.handleAsync(async () => {
       const file = this.#mapIdToFile.get(fileId);
       log(`xUnlock ${file.path} ${flags}`);
-      
+
       return file.locks.unlock(flags);
     });
   }
@@ -583,8 +583,8 @@ export class IDBVersionedVFS extends VFS.Base {
   xDeviceCharacteristics(fileId) {
     log('xDeviceCharacteristics');
     return VFS.SQLITE_IOCAP_SAFE_APPEND |
-           VFS.SQLITE_IOCAP_SEQUENTIAL |
-           VFS.SQLITE_IOCAP_UNDELETABLE_WHEN_OPEN;
+      VFS.SQLITE_IOCAP_SEQUENTIAL |
+      VFS.SQLITE_IOCAP_UNDELETABLE_WHEN_OPEN;
   }
 
   /**
@@ -624,7 +624,7 @@ export class IDBVersionedVFS extends VFS.Base {
         file.changedPages = null;
       }
 
-      this.#idb.run('readwrite', async ({blocks})=> {
+      this.#idb.run('readwrite', async ({ blocks }) => {
         blocks.put(file.block0);
         if (purgeList.size) {
           // Blocks to purge are saved in a special IndexedDB object with
@@ -661,7 +661,7 @@ export class IDBVersionedVFS extends VFS.Base {
       log(`xAccess ${path} ${flags}`);
 
       // Check if block 0 exists.
-      const key = await this.#idb.run('readonly', ({blocks}) => {
+      const key = await this.#idb.run('readonly', ({ blocks }) => {
         return blocks.getKey(IDBKeyRange.bound(
           [path, 0],
           [path, 0, Infinity]));
@@ -681,7 +681,7 @@ export class IDBVersionedVFS extends VFS.Base {
       const path = new URL(name, 'file://localhost/').pathname;
       log(`xDelete ${path} ${syncDir}`);
 
-      const complete = this.#idb.run('readwrite', ({blocks}) => {
+      const complete = this.#idb.run('readwrite', ({ blocks }) => {
         return blocks.delete(IDBKeyRange.bound(
           [path],
           [path, []]));
@@ -700,7 +700,7 @@ export class IDBVersionedVFS extends VFS.Base {
   purge(name) {
     const start = Date.now();
     const path = new URL(name, 'file://localhost/').pathname;
-    this.#idb.run('readwrite', async ({blocks}) => {
+    this.#idb.run('readwrite', async ({ blocks }) => {
       const purgeBlock = await blocks.get([path, 'purge', 0]);
       if (purgeBlock) {
         for (const [pageIndex, version] of purgeBlock.data) {
@@ -713,7 +713,7 @@ export class IDBVersionedVFS extends VFS.Base {
       }
       log(`purge ${name} ${purgeBlock?.data.size ?? 0} pages in ${Date.now() - start} ms`);
     });
-    }
+  }
 
   /**
    * Conditionally schedule a purge task.
@@ -722,12 +722,12 @@ export class IDBVersionedVFS extends VFS.Base {
    */
   #maybePurge(name, nPages) {
     if (this.#options.purge === 'manual' ||
-        this.#pendingPurges.has(name) ||
-        nPages < this.#options.purgeAtLeast) {
+      this.#pendingPurges.has(name) ||
+      nPages < this.#options.purgeAtLeast) {
       // No purge needed.
       return;
     }
-    
+
     if (globalThis.requestIdleCallback) {
       globalThis.requestIdleCallback(() => {
         this.purge(name);
@@ -764,7 +764,7 @@ export class IDBVersionedVFS extends VFS.Base {
   }
 
   #restoreBlock0(file, version) {
-    return this.#idb.run('readonly', async ({blocks}) => {
+    return this.#idb.run('readonly', async ({ blocks }) => {
       file.block0 = await blocks.get(IDBKeyRange.bound(
         [file.path, 0, version],
         [file.path, 0, Infinity]));
@@ -828,7 +828,7 @@ function openDatabase(idbDatabaseName) {
             cursorRequest.addEventListener('error', () => {
               fail(cursorRequest.error);
             });
-          });            
+          });
           db.deleteObjectStore('database');
           db.deleteObjectStore('spill');
           db.deleteObjectStore('journal');

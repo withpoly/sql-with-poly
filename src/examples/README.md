@@ -1,4 +1,4 @@
-# wa-sqlite example code
+# sql-with-poly example code
 These examples are intended to help developers get started with writing extensions,
 and to experiment with interesting approaches and techniques. Using them as-is in
 production is not prohibited but that isn't their primary purpose.
@@ -11,12 +11,12 @@ probably start by looking at these classes, as well as the
 
 ### IDBBatchAtomicVFS
 This is a VFS implementation that uses
-[batch atomic writes](https://github.com/rhashimoto/wa-sqlite/discussions/47).
+[batch atomic writes](https://github.com/withpoly/sql-with-poly/discussions/47).
 This is now the featured IndexedDB VFS for the demo and benchmarks.
 
 ### IDBVersionedVFS
 This is a VFS implementation that stores
-[versioned blocks on IndexedDB](https://github.com/rhashimoto/wa-sqlite/discussions/37).
+[versioned blocks on IndexedDB](https://github.com/withpoly/sql-with-poly/discussions/37).
 It uses an interesting hack to avoid storing journal data. No further development
 is planned for this class as IDBBatchAtomicVFS provides most of the same advantages
 with a cleaner approach.
@@ -25,7 +25,7 @@ with a cleaner approach.
 This is another implementation of VFS on IndexedDB that provides less performance
 but is smaller and simpler, and is a good starting point for building a novel
 IndexedDB VFS. It is described
-[here](https://github.com/rhashimoto/wa-sqlite/discussions/46).
+[here](https://github.com/withpoly/sql-with-poly/discussions/46).
 
 ### OriginPrivateFileSystemVFS
 This VFS uses the proposed
@@ -37,7 +37,7 @@ dependent proposal. Note that OPFS works only in a Worker and at this writing is
 
 ### AccessHandlePoolVFS
 This VFS uses the new more synchronous OPFS access handle API as described in
-[this discussion](https://github.com/rhashimoto/wa-sqlite/discussions/67)
+[this discussion](https://github.com/withpoly/sql-with-poly/discussions/67)
 to implement a synchronous VFS, i.e. one that does not need Asyncify (or
 any other mechanism to use Promise with WASM). Note that this approach
 does not support SQLite locking so concurrent access would require the

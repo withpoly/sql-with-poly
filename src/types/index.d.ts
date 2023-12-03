@@ -2,8 +2,8 @@
  * This is a WebAssembly build of SQLite with experimental support for
  * writing SQLite virtual file systems and modules (for virtual tables)
  * in Javascript. Also see the
- * [GitHub repository](https://github.com/rhashimoto/wa-sqlite) and the
- * [online demo](https://rhashimoto.github.io/wa-sqlite/demo/).
+ * [GitHub repository](https://github.com/withpoly/sql-with-poly) and the
+ * [online demo](https://rhashimoto.github.io/sql-with-poly/demo/).
  * @module
  */
 
@@ -24,11 +24,11 @@ type SQLiteCompatibleType = number|string|Uint8Array|Array<number>|bigint|null;
  * to define a new filesystem.
  * 
  * There are examples of a synchronous
- * [MemoryVFS.js](https://github.com/rhashimoto/wa-sqlite/blob/master/src/examples/MemoryVFS.js),
+ * [MemoryVFS.js](https://github.com/withpoly/sql-with-poly/blob/master/src/examples/MemoryVFS.js),
  * and asynchronous
- * [MemoryAsyncVFS.js](https://github.com/rhashimoto/wa-sqlite/blob/master/src/examples/MemoryAsyncVFS.js)
+ * [MemoryAsyncVFS.js](https://github.com/withpoly/sql-with-poly/blob/master/src/examples/MemoryAsyncVFS.js)
  * and
- * [IndexedDbVFS.js](https://github.com/rhashimoto/wa-sqlite/blob/master/src/examples/IndexedDbVFS.js).
+ * [IndexedDbVFS.js](https://github.com/withpoly/sql-with-poly/blob/master/src/examples/IndexedDbVFS.js).
  * 
  * @see https://sqlite.org/vfs.html
  * @see https://sqlite.org/c3ref/io_methods.html
@@ -144,7 +144,7 @@ declare interface SQLiteModuleIndexInfo {
  * to define a module for virtual tables.
  * 
  * There is an example
- * [ArrayModule.js](https://github.com/rhashimoto/wa-sqlite/blob/master/src/examples/ArrayModule.js)
+ * [ArrayModule.js](https://github.com/withpoly/sql-with-poly/blob/master/src/examples/ArrayModule.js)
  * that allows a virtual table to reference a Javascript array.
  * 
  * @see https://sqlite.org/vtab.html
@@ -277,14 +277,14 @@ declare interface SQLiteModule {
  * 
  * ```javascript
  * // Import an ES6 module factory function from one of the
- * // package builds, either 'wa-sqlite.mjs' (synchronous) or
- * // 'wa-sqlite-async.mjs' (asynchronous). You should only
+ * // package builds, either 'sql-with-poly.mjs' (synchronous) or
+ * // 'sql-with-poly-async.mjs' (asynchronous). You should only
  * // use the asynchronous build if you plan to use an
  * // asynchronous VFS or module.
- * import SQLiteESMFactory from 'wa-sqlite/dist/wa-sqlite.mjs';
+ * import SQLiteESMFactory from 'sql-with-poly/dist/sql-with-poly.mjs';
  * 
  * // Import the Javascript API wrappers.
- * import * as SQLite from 'wa-sqlite';
+ * import * as SQLite from 'sql-with-poly';
  * 
  * // Use an async function to simplify Promise handling.
  * (async function() {
@@ -1053,7 +1053,7 @@ declare interface SQLiteAPI {
 }
 
 /** @ignore */
-declare module 'wa-sqlite/src/sqlite-constants.js' {
+declare module 'sql-with-poly/src/sqlite-constants.js' {
   export const SQLITE_OK: 0;
   export const SQLITE_ERROR: 1;
   export const SQLITE_INTERNAL: 2;
@@ -1286,8 +1286,8 @@ declare module 'wa-sqlite/src/sqlite-constants.js' {
 }
 
 /** @ignore */
-declare module 'wa-sqlite' {
-  export * from 'wa-sqlite/src/sqlite-constants.js';
+declare module 'sql-with-poly' {
+  export * from 'sql-with-poly/src/sqlite-constants.js';
 
   /**
    * Builds a Javascript API from the Emscripten module. This API is still
@@ -1305,20 +1305,20 @@ declare module 'wa-sqlite' {
 }
 
 /** @ignore */
-declare module 'wa-sqlite/dist/wa-sqlite.mjs' {
+declare module 'sql-with-poly/dist/sql-with-poly.mjs' {
   function ModuleFactory(config?: object): Promise<any>;
   export = ModuleFactory;
 }
 
 /** @ignore */
-declare module 'wa-sqlite/dist/wa-sqlite-async.mjs' {
+declare module 'sql-with-poly/dist/sql-with-poly-async.mjs' {
   function ModuleFactory(config?: object): Promise<any>;
   export = ModuleFactory;
 }
 
 /** @ignore */
-declare module 'wa-sqlite/src/VFS.js' {
-  export * from 'wa-sqlite/src/sqlite-constants.js';
+declare module 'sql-with-poly/src/VFS.js' {
+  export * from 'sql-with-poly/src/sqlite-constants.js';
 
   export class Base {
     mxPathName: number;
@@ -1433,7 +1433,7 @@ declare module 'wa-sqlite/src/VFS.js' {
 }
 
 /** @ignore */
-declare module 'wa-sqlite/src/examples/ArrayModule.js' {
+declare module 'sql-with-poly/src/examples/ArrayModule.js' {
   export class ArrayModule {
     /**
      * @param {SQLiteAPI} sqlite3
@@ -1542,8 +1542,8 @@ declare module 'wa-sqlite/src/examples/ArrayModule.js' {
 }
 
 /** @ignore */
-declare module 'wa-sqlite/src/examples/ArrayAsyncModule.js' {
-  import { ArrayModule } from "wa-sqlite/src/examples/ArrayModule.js";
+declare module 'sql-with-poly/src/examples/ArrayAsyncModule.js' {
+  import { ArrayModule } from "sql-with-poly/src/examples/ArrayModule.js";
   export class ArrayAsyncModule extends ArrayModule {
     /**
      * @param {function} f
@@ -1554,8 +1554,8 @@ declare module 'wa-sqlite/src/examples/ArrayAsyncModule.js' {
 }
 
 /** @ignore */
-declare module 'wa-sqlite/src/examples/IndexedDbVFS.js' {
-  import * as VFS from "wa-sqlite/src/VFS.js";
+declare module 'sql-with-poly/src/examples/IndexedDbVFS.js' {
+  import * as VFS from "sql-with-poly/src/VFS.js";
   export class IndexedDbVFS extends VFS.Base {
     /**
      * @param {string} idbName Name of IndexedDB database.
@@ -1607,8 +1607,8 @@ declare module 'wa-sqlite/src/examples/IndexedDbVFS.js' {
 }
 
 /** @ignore */
-declare module 'wa-sqlite/src/examples/MemoryVFS.js' {
-  import * as VFS from "wa-sqlite/src/VFS.js";
+declare module 'sql-with-poly/src/examples/MemoryVFS.js' {
+  import * as VFS from "sql-with-poly/src/VFS.js";
   export class MemoryVFS extends VFS.Base {
     name: string;
     mapNameToFile: Map<any, any>;
@@ -1617,14 +1617,14 @@ declare module 'wa-sqlite/src/examples/MemoryVFS.js' {
 }
 
 /** @ignore */
-declare module 'wa-sqlite/src/examples/MemoryAsyncVFS.js' {
-  import { MemoryVFS } from "wa-sqlite/src/examples/MemoryVFS.js";
+declare module 'sql-with-poly/src/examples/MemoryAsyncVFS.js' {
+  import { MemoryVFS } from "sql-with-poly/src/examples/MemoryVFS.js";
   export class MemoryAsyncVFS extends MemoryVFS {
   }
 }
 
 /** @ignore */
-declare module 'wa-sqlite/src/examples/tag.js' {
+declare module 'sql-with-poly/src/examples/tag.js' {
   /**
    * Template tag builder. This function creates a tag with an API and
    * database from the same module, then the tag can be used like this:

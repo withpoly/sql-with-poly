@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  This is a minimal example of using wa-sqlite. In production, code will
+  This is a minimal example of using sql-with-poly. In production, code will
   likely be bundled, resolving the ES6 module imports. Bundling is not
   done here to avoid that additional complication, but this means that
   the bare module specifiers need special handling to work as-is.
@@ -14,15 +14,15 @@
 <script type="importmap">
   {
     "imports": {
-      "wa-sqlite": "../src/sqlite-api.js",
-      "wa-sqlite/dist/wa-sqlite.mjs": "../dist/wa-sqlite.mjs"
+      "sql-with-poly": "../src/sqlite-api.js",
+      "sql-with-poly/dist/sql-with-poly.mjs": "../dist/sql-with-poly.mjs"
     }
   }
 </script>
 
 <script type="module">
-  import SQLiteESMFactory from 'wa-sqlite/dist/wa-sqlite.mjs';
-  import * as SQLite from 'wa-sqlite';
+  import SQLiteESMFactory from 'sql-with-poly/dist/sql-with-poly.mjs';
+  import * as SQLite from 'sql-with-poly';
 
   async function hello() {
     const module = await SQLiteESMFactory();

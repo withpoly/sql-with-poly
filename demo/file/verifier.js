@@ -1,4 +1,4 @@
-import SQLiteESMFactory from '../../dist/wa-sqlite-async.mjs';
+import SQLiteESMFactory from '../../dist/sql-with-poly-async.mjs';
 import * as SQLite from '../../src/sqlite-api.js';
 import { IDBBatchAtomicVFS } from '../../src/examples/IDBBatchAtomicVFS.js';
 
@@ -6,7 +6,7 @@ const SEARCH_PARAMS = new URLSearchParams(location.search);
 const IDB_NAME = SEARCH_PARAMS.get('idb') ?? 'sqlite-vfs';
 const DB_NAME = SEARCH_PARAMS.get('db') ?? 'sqlite.db';
 
-(async function() {
+(async function () {
   const module = await SQLiteESMFactory();
   const sqlite3 = SQLite.Factory(module);
 
@@ -20,6 +20,6 @@ const DB_NAME = SEARCH_PARAMS.get('db') ?? 'sqlite.db';
     results.push(row[0]);
   });
   await sqlite3.close(db);
-  
+
   postMessage(results);
 })();

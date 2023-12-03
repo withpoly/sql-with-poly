@@ -18,9 +18,9 @@ CREATE TABLE IF NOT EXISTS copied AS SELECT * FROM goog;
 SELECT * FROM copied LIMIT 5;`.trim();
 
 const SHARED_SERVICE_NAME = 'ahp-demo';
-const SQL_KEY = 'wa-sqlite demo sql';
+const SQL_KEY = 'sql-with-poly demo sql';
 
-window.addEventListener('DOMContentLoaded', async function() {
+window.addEventListener('DOMContentLoaded', async function () {
   const params = new URLSearchParams(window.location.search);
   if (params.has('clear')) {
     localStorage.clear();
@@ -35,7 +35,7 @@ window.addEventListener('DOMContentLoaded', async function() {
   const button = /** @type {HTMLButtonElement} */(document.getElementById('execute'));
   const editorReady = createMonacoEditor().then(editor => {
     // Change the button text with selection.
-    editor.onDidChangeCursorSelection(({selection}) => {
+    editor.onDidChangeCursorSelection(({ selection }) => {
       button.textContent = selection.isEmpty() ?
         'Execute' :
         'Execute selection';
@@ -43,9 +43,9 @@ window.addEventListener('DOMContentLoaded', async function() {
 
     // Persist editor content across page loads.
     let change;
-    editor.onDidChangeModelContent(function() {
+    editor.onDidChangeModelContent(function () {
       clearTimeout(change);
-      change = setTimeout(function() {
+      change = setTimeout(function () {
         localStorage.setItem(SQL_KEY, editor.getValue());
       }, 1000);
     });
@@ -68,7 +68,7 @@ window.addEventListener('DOMContentLoaded', async function() {
   sharedService.activate();
 
   // Execute SQL on button click.
-  button.addEventListener('click', async function() {
+  button.addEventListener('click', async function () {
     button.disabled = true;
 
     // Get SQL from editor.

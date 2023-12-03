@@ -10,8 +10,8 @@ import { ArrayAsyncModule } from "../src/examples/ArrayAsyncModule.js";
 // For a typical application, the Emscripten module would be imported
 // statically, but we want to be able to select between the Asyncify
 // and non-Asyncify builds so dynamic import is done later.
-const WA_SQLITE = '../dist/wa-sqlite.mjs';
-const WA_SQLITE_ASYNC = '../dist/wa-sqlite-async.mjs';
+const WA_SQLITE = '../dist/sql-with-poly.mjs';
+const WA_SQLITE_ASYNC = '../dist/sql-with-poly-async.mjs';
 
 /**
  * @typedef Config
@@ -22,7 +22,7 @@ const WA_SQLITE_ASYNC = '../dist/wa-sqlite-async.mjs';
  * @property {Array<*>} [vfsArgs] VFS constructor arguments
  */
 
-(async function() {
+(async function () {
   const Comlink = await import(location.hostname.endsWith('localhost') ?
     '/.yarn/unplugged/comlink-npm-4.4.1-b05bb2527d/node_modules/comlink/dist/esm/comlink.min.js' :
     'https://unpkg.com/comlink/dist/esm/comlink.mjs');
@@ -65,7 +65,7 @@ const WA_SQLITE_ASYNC = '../dist/wa-sqlite-async.mjs';
       db,
       'regexp', 2,
       SQLite.SQLITE_UTF8 | SQLite.SQLITE_DETERMINISTIC, 0,
-      function(context, values) {
+      function (context, values) {
         const pattern = new RegExp(sqlite3.value_text(values[0]))
         const s = sqlite3.value_text(values[1]);
         sqlite3.result(context, pattern.test(s) ? 1 : 0);
@@ -76,13 +76,13 @@ const WA_SQLITE_ASYNC = '../dist/wa-sqlite-async.mjs';
       db,
       'regexp_replace', -1,
       SQLite.SQLITE_UTF8 | SQLite.SQLITE_DETERMINISTIC, 0,
-      function(context, values) {
+      function (context, values) {
         // Arguments are
         // (pattern, s, replacement) or
         // (pattern, s, replacement, flags).
         if (values.length < 3) {
           sqlite3.result(context, '');
-          return;  
+          return;
         }
         const pattern = sqlite3.value_text(values[0]);
         const s = sqlite3.value_text(values[1]);

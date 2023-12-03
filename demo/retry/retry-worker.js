@@ -1,6 +1,6 @@
 // Copyright 2023 Roy T. Hashimoto. All Rights Reserved.
 
-import SQLiteESMFactory from '../../dist/wa-sqlite.mjs';
+import SQLiteESMFactory from '../../dist/sql-with-poly.mjs';
 import * as SQLite from '../../src/sqlite-api.js';
 import { RetryVFS } from './RetryVFS.js'
 
@@ -28,7 +28,7 @@ class DatabaseService {
 
   query(sql) {
     const result = this.#chain.then(async () => this.#query(sql));
-    this.#chain = result.catch(() => {});
+    this.#chain = result.catch(() => { });
     return result;
   }
 
@@ -49,7 +49,7 @@ class DatabaseService {
       db,
       'regexp', 2,
       SQLite.SQLITE_UTF8 | SQLite.SQLITE_DETERMINISTIC, 0,
-      function(context, values) {
+      function (context, values) {
         const pattern = new RegExp(sqlite3.value_text(values[0]))
         const s = sqlite3.value_text(values[1]);
         sqlite3.result(context, pattern.test(s) ? 1 : 0);
@@ -60,13 +60,13 @@ class DatabaseService {
       db,
       'regexp_replace', -1,
       SQLite.SQLITE_UTF8 | SQLite.SQLITE_DETERMINISTIC, 0,
-      function(context, values) {
+      function (context, values) {
         // Arguments are
         // (pattern, s, replacement) or
         // (pattern, s, replacement, flags).
         if (values.length < 3) {
           sqlite3.result(context, '');
-          return;  
+          return;
         }
         const pattern = sqlite3.value_text(values[0]);
         const s = sqlite3.value_text(values[1]);
@@ -85,7 +85,7 @@ class DatabaseService {
             // sqlite3_reset() will return an error if the previous step
             // caused an error. RetryVFS intentionally causes SQLITE_BUSY
             // so these errors are ignored.
-            await sqlite3.reset(stmt).catch(() => {});
+            await sqlite3.reset(stmt).catch(() => { });
 
             const rows = [];
             while (await sqlite3.step(stmt) === SQLite.SQLITE_ROW) {

@@ -58,7 +58,7 @@ export class IDBBatchAtomicVFS extends VFS.Base {
   #taskTimestamp = performance.now();
   #pendingAsync = new Set();
 
-  constructor(idbDatabaseName = 'wa-sqlite', options = DEFAULT_OPTIONS) {
+  constructor(idbDatabaseName = 'sql-with-poly', options = DEFAULT_OPTIONS) {
     super();
     this.name = idbDatabaseName;
     this.#options = Object.assign({}, DEFAULT_OPTIONS, options);
