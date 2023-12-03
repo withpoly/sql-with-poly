@@ -7,6 +7,9 @@
  * @module
  */
 
+// @abhay-agarwal: adding the IDBBatchAtomicVFS Declaration
+declare module 'sql-with-poly/src/examples/IDBBatchAtomicVFS';
+
 /**
  *  Javascript types that SQLite can use
  * 
