@@ -1371,12 +1371,12 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.0.0":
-  version: 1.14.9
-  resolution: "follow-redirects@npm:1.14.9"
+  version: 1.15.4
+  resolution: "follow-redirects@npm:1.15.4"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: f5982e0eb481818642492d3ca35a86989c98af1128b8e1a62911a3410621bc15d2b079e8170b35b19d3bdee770b73ed431a257ed86195af773771145baa57845
+  checksum: e178d1deff8b23d5d24ec3f7a94cde6e47d74d0dc649c35fc9857041267c12ec5d44650a0c5597ef83056ada9ea6ca0c30e7c4f97dbf07d035086be9e6a5b7b6
   languageName: node
   linkType: hard
 
@@ -2968,6 +2968,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sql-with-poly@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "sql-with-poly@workspace:."
+  dependencies:
+    "@web/dev-server": ^0.1.13
+    comlink: ^4.4.1
+    jasmine-core: ^4.5.0
+    karma: ^6.4.1
+    karma-chrome-launcher: ^3.1.1
+    karma-jasmine: ^5.1.0
+    monaco-editor: ^0.34.1
+    puppeteer: ^19.6.3
+    sinon: ^15.0.1
+    typedoc: ^0.22.11
+    typescript: ^4.2.4
+  dependenciesMeta:
+    comlink@4.4.1:
+      unplugged: true
+    monaco-editor@0.34.1:
+      unplugged: true
+    sinon@15.0.1:
+      unplugged: true
+  languageName: unknown
+  linkType: soft
+
 "ssri@npm:^8.0.1":
   version: 8.0.1
   resolution: "ssri@npm:8.0.1"
@@ -3313,31 +3338,6 @@ __metadata:
   checksum: 5449b42d451080f6f3649b66948f4b5ee4643c4e88cfe3558a3b31c84c78060cfdd288c4958c1690eaa5cd65d09992fa6b7c3bef9d4aa72b3651054a04624d20
   languageName: node
   linkType: hard
-
-"sql-with-poly@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "sql-with-poly@workspace:."
-  dependencies:
-    "@web/dev-server": ^0.1.13
-    comlink: ^4.4.1
-    jasmine-core: ^4.5.0
-    karma: ^6.4.1
-    karma-chrome-launcher: ^3.1.1
-    karma-jasmine: ^5.1.0
-    monaco-editor: ^0.34.1
-    puppeteer: ^19.6.3
-    sinon: ^15.0.1
-    typedoc: ^0.22.11
-    typescript: ^4.2.4
-  dependenciesMeta:
-    comlink@4.4.1:
-      unplugged: true
-    monaco-editor@0.34.1:
-      unplugged: true
-    sinon@15.0.1:
-      unplugged: true
-  languageName: unknown
-  linkType: soft
 
 "webidl-conversions@npm:^3.0.0":
   version: 3.0.1
