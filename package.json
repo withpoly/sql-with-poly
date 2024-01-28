@@ -1,5 +1,5 @@
 {
-  "name": "sql-with-poly",
+  "name": "wa-sqlite",
   "version": "0.9.11",
   "type": "module",
   "main": "src/sqlite-api.js",
